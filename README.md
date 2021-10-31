@@ -15,3 +15,6 @@ Rust's [Result](https://doc.rust-lang.org/std/result/enum.Result.html) ships wit
 of combinators meant to ease common tasks requiring handling failure safely.
 
 This library extends it with a little extra set of capabilities as defined in the `ResultExt<A, E>` trait.
+
+Moreover, it's offered convenient functions to lift values into successful or failed results with the traits
+`IntoOk<O>` and `IntoErr<E>`, respectively.

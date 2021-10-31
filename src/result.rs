@@ -55,3 +55,39 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         self.and_then(|_| f())
     }
 }
+
+/// Lifter of values into successful results.
+pub trait IntoOk<O> {
+    /// Lifts a value of type `O` into a `Result<O, E>` by wrapping it into an `Ok`.
+    ///
+    /// ```
+    /// use lifterr::result::IntoOk;
+    ///
+    /// assert_eq!(42.into_ok::<&'static str>(), Ok(42));
+    /// ```
+    fn into_ok<E>(self) -> Result<O, E>;
+}
+
+impl<O> IntoOk<O> for O {
+    fn into_ok<E>(self) -> Result<O, E> {
+        Ok(self)
+    }
+}
+
+/// Lifter of values into failed results.
+pub trait IntoErr<E> {
+    /// Lifts a value of type `E` into a `Result<O, E>` by wrapping it into an `Err`.
+    ///
+    /// ```
+    /// use lifterr::result::IntoErr;
+    ///
+    /// assert_eq!("e".into_err::<i32>(), Err("e"));
+    /// ```
+    fn into_err<O>(self) -> Result<O, E>;
+}
+
+impl<E> IntoErr<E> for E {
+    fn into_err<O>(self) -> Result<O, E> {
+        Err(self)
+    }
+}
