@@ -7,7 +7,7 @@ pub trait ResultExt<A, E> {
     /// Applies `f` yielding yet another result if `Ok(x)` otherwise propagates `Err`.
     ///
     /// ```
-    /// use lifterr::result::ResultOkExt;
+    /// use lifterr::result::ResultExt;
     ///
     /// fn ok() -> Result<i32, &'static str> { Ok(1) }
     /// fn err() -> Result<i32, &'static str> { Err("e") }
@@ -22,7 +22,7 @@ pub trait ResultExt<A, E> {
     /// Applies `f` yielding a value which is then wrapped into another result if `Ok(x)` otherwise propagates `Err`.
     ///
     /// ```
-    /// use lifterr::result::ResultOkExt;
+    /// use lifterr::result::ResultExt;
     ///
     /// fn ok() -> Result<i32, &'static str> { Ok(1) }
     /// fn err() -> Result<i32, &'static str> { Err("e") }
