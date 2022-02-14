@@ -39,6 +39,11 @@ mod result {
         validate_size(msg)
             .then(|| validate_code(msg))
             .then(|| validate_payload(msg))
+            .recover_with(|e| match e {
+                // Ignore payload errors.
+                "payload" => Ok(()),
+                _ => Err(e),
+            })
     }
 
     fn validate_size(msg: &[u8]) -> Result<()> {

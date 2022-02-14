@@ -45,6 +45,30 @@ pub trait ResultExt<A, E> {
     {
         self.remap(|| ())
     }
+
+    /// Recovers from an error of type `E` with a non-fallible function.
+    fn recover<F>(self, f: F) -> Result<A, E>
+    where
+        F: FnOnce(E) -> A,
+        Self: Sized,
+    {
+        self.recover_with(|e| Ok(f(e)))
+    }
+
+    /// Recovers from an error of type `E` with a fallible function, possibly remapping to a different error of type `H`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    ///
+    /// fn err_not_fine() -> Result<i32, &'static str> { Err("bad error") }
+    /// fn err_fine() -> Result<i32, &'static str> { Err("42") }
+    ///
+    /// assert_eq!(err_not_fine().recover_with(|e| if e == "42" { Ok(42) } else { Err("not fine") }), Err("not fine"));
+    /// assert_eq!(err_fine().recover_with(|e| if e == "42" { Ok(42) } else { Err("not fine") }), Ok(42));
+    /// ```
+    fn recover_with<H, F>(self, f: F) -> Result<A, H>
+    where
+        F: FnOnce(E) -> Result<A, H>;
 }
 
 impl<A, E> ResultExt<A, E> for Result<A, E> {
@@ -53,6 +77,13 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         F: Fn() -> Result<B, E>,
     {
         self.and_then(|_| f())
+    }
+
+    fn recover_with<H, F>(self, f: F) -> Result<A, H>
+    where
+        F: FnOnce(E) -> Result<A, H>,
+    {
+        self.map_or_else(f, A::into_ok)
     }
 }
 
