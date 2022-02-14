@@ -45,6 +45,30 @@ pub trait OptionExt<A> {
     {
         self.remap(|| ())
     }
+
+    /// Recovers from an absent value with a total function.
+    fn recover<F>(self, f: F) -> Option<A>
+    where
+        F: FnOnce() -> A,
+        Self: Sized,
+    {
+        self.recover_with(|| f().into())
+    }
+
+    /// Recovers from an absent value with a partial function.
+    ///
+    /// ```
+    /// use lifterr::option::OptionExt;
+    ///
+    /// fn not_found() -> Option<i32> { None }
+    /// fn fallback() -> Option<i32> { Some(42) }
+    ///
+    /// assert_eq!(Some(10).recover_with(fallback), Some(10));
+    /// assert_eq!(not_found().recover_with(fallback), Some(42));
+    /// ```
+    fn recover_with<F>(self, f: F) -> Option<A>
+    where
+        F: FnOnce() -> Option<A>;
 }
 
 impl<A> OptionExt<A> for Option<A> {
@@ -53,5 +77,12 @@ impl<A> OptionExt<A> for Option<A> {
         F: Fn() -> Option<B>,
     {
         self.and_then(|_| f())
+    }
+
+    fn recover_with<F>(self, f: F) -> Option<A>
+    where
+        F: FnOnce() -> Option<A>,
+    {
+        self.map_or_else(f, A::into)
     }
 }
