@@ -3,5 +3,11 @@ name = "lifterr"
 description = "A small set of adapters extending Rust's error-handling capabilities"
 version = "0.1.0"
 edition = "2018"
+license = "MIT"
+repository = "https://github.com/rvarago/lifterr"
+documentation = "https://docs.rs/lifterr"
+readme = "README.md"
+keywords = ["lifterr", "error", "error handling"]
+categories = ["rust-patterns"]
 
 [dependencies]
