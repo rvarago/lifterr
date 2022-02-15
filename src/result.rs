@@ -66,7 +66,7 @@ pub trait ResultExt<A, E> {
     /// assert_eq!(err_not_fine().recover_with(|e| if e == "42" { Ok(42) } else { Err("not fine") }), Err("not fine"));
     /// assert_eq!(err_fine().recover_with(|e| if e == "42" { Ok(42) } else { Err("not fine") }), Ok(42));
     /// ```
-    fn recover_with<H, F>(self, f: F) -> Result<A, H>
+    fn recover_with<F, H>(self, f: F) -> Result<A, H>
     where
         F: FnOnce(E) -> Result<A, H>;
 }
@@ -79,7 +79,7 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         self.and_then(|_| f())
     }
 
-    fn recover_with<H, F>(self, f: F) -> Result<A, H>
+    fn recover_with<F, H>(self, f: F) -> Result<A, H>
     where
         F: FnOnce(E) -> Result<A, H>,
     {
