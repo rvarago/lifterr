@@ -7,7 +7,7 @@ license = "MIT"
 repository = "https://github.com/rvarago/lifterr"
 documentation = "https://docs.rs/lifterr"
 readme = "README.md"
-keywords = ["lifterr", "error", "error handling"]
+keywords = ["lifterr", "error"]
 categories = ["rust-patterns"]
 
 [dependencies]
