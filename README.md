@@ -2,6 +2,10 @@
 
 > A small set of adapters extending Rust's error-handling capabilities.
 
+[<img alt="github" src="https://img.shields.io/badge/github-rvarago/lifterr?style=for-the-badge&logo=github" height="20">](https://github.com/rvarago/lifterr)
+[<img alt="crates.io" src="https://img.shields.io/crates/v/lifterr.svg?style=for-the-badge&logo=rust" height="20">](https://crates.io/crates/lifterr)
+[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-lifterr?style=for-the-badge" height="20">](https://docs.rs/lifterr)
+
 ## Option
 
 Rust's [Option](https://doc.rust-lang.org/std/option/enum.Option.html) ships with a suite
