@@ -37,13 +37,16 @@ mod result {
         let msg = &[0x05, 0x10][..];
 
         validate_size(msg)
+            // Chain validations where the success value doesn't matter.
             .then(|| validate_code(msg))
             .then(|| validate_payload(msg))
+            // Ignore payload errors.
             .recover_with(|e| match e {
-                // Ignore payload errors.
                 "payload" => Ok(()),
                 _ => Err(e),
             })
+            // Hide cause behind a "higher-level" error.
+            .remap_err(|| "oops")
     }
 
     fn validate_size(msg: &[u8]) -> Result<()> {

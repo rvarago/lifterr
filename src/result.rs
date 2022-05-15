@@ -46,6 +46,48 @@ pub trait ResultExt<A, E> {
         self.remap(|| ())
     }
 
+    /// Applies `f` yielding yet another result if `Err(x)` otherwise propagates `Ok`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    ///
+    /// fn ok() -> Result<i32, &'static str> { Ok(1) }
+    /// fn err() -> Result<i32, &'static str> { Err("e") }
+    ///
+    /// assert_eq!(ok().then_err(|| Err("42")), Ok(1));
+    /// assert_eq!(err().then_err(|| Err("42")), Err("42"));
+    /// ```
+    fn then_err<F, H>(self, f: F) -> Result<A, H>
+    where
+        F: Fn() -> Result<A, H>;
+
+    /// Applies `f` yielding a value which is then wrapped into another result if `Err(x)` otherwise propagates `Ok`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    ///
+    /// fn ok() -> Result<i32, &'static str> { Ok(1) }
+    /// fn err() -> Result<i32, &'static str> { Err("e") }
+    ///
+    /// assert_eq!(ok().remap_err(|| "42"), Ok(1));
+    /// assert_eq!(err().remap_err(|| "42"), Err("42"));
+    /// ```
+    fn remap_err<F, H>(self, f: F) -> Result<A, H>
+    where
+        Self: Sized,
+        F: Fn() -> H,
+    {
+        self.then_err(|| f().into_err())
+    }
+
+    /// Replaces whatever value of type `E` in `Result<A, E>` with an unit.
+    fn void_err(self) -> Result<A, ()>
+    where
+        Self: Sized,
+    {
+        self.remap_err(|| ())
+    }
+
     /// Recovers from an error of type `E` with a non-fallible function.
     fn recover<F>(self, f: F) -> Result<A, E>
     where
@@ -77,6 +119,13 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         F: Fn() -> Result<B, E>,
     {
         self.and_then(|_| f())
+    }
+
+    fn then_err<F, H>(self, f: F) -> Result<A, H>
+    where
+        F: Fn() -> Result<A, H>,
+    {
+        self.or_else(|_| f())
     }
 
     fn recover_with<F, H>(self, f: F) -> Result<A, H>
