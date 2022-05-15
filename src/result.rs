@@ -35,7 +35,7 @@ pub trait ResultExt<A, E> {
         Self: Sized,
         F: Fn() -> B,
     {
-        self.then(|| Ok(f()))
+        self.then(|| f().into_ok())
     }
 
     /// Replaces whatever value of type `A` in `Result<A, E>` with an unit.
@@ -52,7 +52,7 @@ pub trait ResultExt<A, E> {
         F: FnOnce(E) -> A,
         Self: Sized,
     {
-        self.recover_with(|e| Ok(f(e)))
+        self.recover_with(|e| f(e).into_ok())
     }
 
     /// Recovers from an error of type `E` with a fallible function, possibly remapping to a different error of type `H`.
