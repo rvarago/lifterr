@@ -88,6 +88,19 @@ pub trait ResultExt<A, E> {
         self.remap_err(|| ())
     }
 
+    /// Swaps `Ok(o)` into `Err(o)` or `Err(e)` into `Ok(e)`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    ///
+    /// fn ok() -> Result<i32, &'static str> { Ok(1) }
+    /// fn err() -> Result<i32, &'static str> { Err("e") }
+    ///
+    /// assert_eq!(ok().swap(), Err(1));
+    /// assert_eq!(err().swap(), Ok("e"));
+    /// ```
+    fn swap(self) -> Result<E, A>;
+
     /// Recovers from an error of type `E` with a non-fallible function.
     fn recover<F>(self, f: F) -> Result<A, E>
     where
@@ -126,6 +139,13 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         F: Fn() -> Result<A, H>,
     {
         self.or_else(|_| f())
+    }
+
+    fn swap(self) -> Result<E, A> {
+        match self {
+            Ok(o) => Err(o),
+            Err(e) => Ok(e),
+        }
     }
 
     fn recover_with<F, H>(self, f: F) -> Result<A, H>
