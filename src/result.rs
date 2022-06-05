@@ -81,6 +81,7 @@ pub trait ResultExt<A, E> {
     }
 
     /// Replaces whatever value of type `E` in `Result<A, E>` with an unit.
+    #[allow(clippy::result_unit_err)]
     fn void_err(self) -> Result<A, ()>
     where
         Self: Sized,
