@@ -1,7 +1,7 @@
 [package]
 name = "lifterr"
 description = "A small set of adapters extending Rust's error-handling capabilities"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2018"
 license = "MIT"
 repository = "https://github.com/rvarago/lifterr"
