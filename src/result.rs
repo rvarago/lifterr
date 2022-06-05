@@ -157,6 +157,36 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
     }
 }
 
+/// Ability to merge branches of a `Result<A, E>` when `A` and `E` are compatible (e.g. when they unify under an `Into<T>` conversion).
+pub trait Merge<T> {
+    /// Merges both branches of a result, giving preference to the `Ok` branch when needed.
+    ///
+    /// ```
+    /// use lifterr::result::Merge;
+    ///
+    /// fn merge_ok() -> i32 {
+    ///     Ok::<_, i32>(42).merge()
+    /// }
+    ///
+    /// fn merge_err() -> i32 {
+    ///     Err::<i32, _>(42).merge()
+    /// }
+    ///
+    /// assert_eq!(merge_ok(), 42);
+    /// assert_eq!(merge_err(), 42);
+    /// ```
+    fn merge(self) -> T;
+}
+
+impl<A, E, T> Merge<T> for Result<A, E>
+where
+    T: From<A> + From<E>,
+{
+    fn merge(self) -> T {
+        self.map_or_else(T::from, T::from)
+    }
+}
+
 /// Lifter of values into successful results.
 pub trait IntoOk<O> {
     /// Lifts a value of type `O` into a `Result<O, E>` by wrapping it into an `Ok`.
