@@ -17,7 +17,7 @@ pub trait ResultExt<A, E> {
     /// ```
     fn then<F, B>(self, f: F) -> Result<B, E>
     where
-        F: Fn() -> Result<B, E>;
+        F: FnOnce() -> Result<B, E>;
 
     /// Applies `f` yielding a value which is then wrapped into another result if `Ok(x)` otherwise propagates `Err`.
     ///
@@ -33,7 +33,7 @@ pub trait ResultExt<A, E> {
     fn remap<F, B>(self, f: F) -> Result<B, E>
     where
         Self: Sized,
-        F: Fn() -> B,
+        F: FnOnce() -> B,
     {
         self.then(|| f().into_ok())
     }
@@ -59,7 +59,7 @@ pub trait ResultExt<A, E> {
     /// ```
     fn then_err<F, H>(self, f: F) -> Result<A, H>
     where
-        F: Fn() -> Result<A, H>;
+        F: FnOnce() -> Result<A, H>;
 
     /// Applies `f` yielding a value which is then wrapped into another result if `Err(x)` otherwise propagates `Ok`.
     ///
@@ -75,7 +75,7 @@ pub trait ResultExt<A, E> {
     fn remap_err<F, H>(self, f: F) -> Result<A, H>
     where
         Self: Sized,
-        F: Fn() -> H,
+        F: FnOnce() -> H,
     {
         self.then_err(|| f().into_err())
     }
@@ -130,14 +130,14 @@ pub trait ResultExt<A, E> {
 impl<A, E> ResultExt<A, E> for Result<A, E> {
     fn then<F, B>(self, f: F) -> Result<B, E>
     where
-        F: Fn() -> Result<B, E>,
+        F: FnOnce() -> Result<B, E>,
     {
         self.and_then(|_| f())
     }
 
     fn then_err<F, H>(self, f: F) -> Result<A, H>
     where
-        F: Fn() -> Result<A, H>,
+        F: FnOnce() -> Result<A, H>,
     {
         self.or_else(|_| f())
     }

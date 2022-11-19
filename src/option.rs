@@ -17,7 +17,7 @@ pub trait OptionExt<A> {
     /// ```
     fn then<F, B>(self, f: F) -> Option<B>
     where
-        F: Fn() -> Option<B>;
+        F: FnOnce() -> Option<B>;
 
     /// Applies `f` yielding a value which is then wrapped into another option if `Some(x)` otherwise propagates `None`.
     ///
@@ -33,7 +33,7 @@ pub trait OptionExt<A> {
     fn remap<F, B>(self, f: F) -> Option<B>
     where
         Self: Sized,
-        F: Fn() -> B,
+        F: FnOnce() -> B,
     {
         self.then(|| f().into())
     }
@@ -74,7 +74,7 @@ pub trait OptionExt<A> {
 impl<A> OptionExt<A> for Option<A> {
     fn then<F, B>(self, f: F) -> Option<B>
     where
-        F: Fn() -> Option<B>,
+        F: FnOnce() -> Option<B>,
     {
         self.and_then(|_| f())
     }
