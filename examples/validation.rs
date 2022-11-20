@@ -16,11 +16,11 @@ mod option {
     }
 
     fn validate_size(msg: &[u8]) -> Option<()> {
-        (msg.len() >= 2).then(|| ())
+        (msg.len() >= 2).then_some(())
     }
 
     fn validate_code(msg: &[u8]) -> Option<()> {
-        msg.get(0).map(|x| *x == 0x05).void()
+        msg.first().map(|x| *x == 0x05).void()
     }
 
     fn validate_payload(msg: &[u8]) -> Option<()> {
@@ -58,7 +58,7 @@ mod result {
     }
 
     fn validate_code(msg: &[u8]) -> Result<()> {
-        msg.get(0).map(|x| *x == 0x05).ok_or("code").void()
+        msg.first().map(|x| *x == 0x05).ok_or("code").void()
     }
 
     fn validate_payload(msg: &[u8]) -> Result<()> {
