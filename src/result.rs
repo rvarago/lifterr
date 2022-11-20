@@ -103,7 +103,7 @@ pub trait ResultExt<A, E> {
     ///
     /// ```
     /// use lifterr::result::ResultExt;
-    /// assert_eq!(Err::<i32, _>(10).inspect(|a| println!("a = {a}")), Err(10));
+    /// assert_eq!(Err::<i32, _>(10).inspect(|e| println!("e = {e}")), Err(10));
     /// ```
     fn inspect_err<F>(self, f: F) -> Result<A, E>
     where
