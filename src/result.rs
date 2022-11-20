@@ -89,6 +89,26 @@ pub trait ResultExt<A, E> {
         self.remap_err(|| ())
     }
 
+    /// Runs `f` with a reference to `A` when `Ok(a)`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    /// assert_eq!(Ok::<_, i32>(10).inspect(|a| println!("a = {a}")), Ok(10));
+    /// ```
+    fn inspect<F>(self, f: F) -> Result<A, E>
+    where
+        F: FnOnce(&A);
+
+    /// Runs `f` with a reference to `E` when `Err(e)`.
+    ///
+    /// ```
+    /// use lifterr::result::ResultExt;
+    /// assert_eq!(Err::<i32, _>(10).inspect(|a| println!("a = {a}")), Err(10));
+    /// ```
+    fn inspect_err<F>(self, f: F) -> Result<A, E>
+    where
+        F: FnOnce(&E);
+
     /// Swaps `Ok(o)` into `Err(o)` or `Err(e)` into `Ok(e)`.
     ///
     /// ```
@@ -140,6 +160,26 @@ impl<A, E> ResultExt<A, E> for Result<A, E> {
         F: FnOnce() -> Result<A, H>,
     {
         self.or_else(|_| f())
+    }
+
+    fn inspect<F>(self, f: F) -> Result<A, E>
+    where
+        F: FnOnce(&A),
+    {
+        self.map(|a| {
+            f(&a);
+            a
+        })
+    }
+
+    fn inspect_err<F>(self, f: F) -> Result<A, E>
+    where
+        F: FnOnce(&E),
+    {
+        self.map_err(|e| {
+            f(&e);
+            e
+        })
     }
 
     fn swap(self) -> Result<E, A> {
