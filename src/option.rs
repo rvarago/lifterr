@@ -46,6 +46,16 @@ pub trait OptionExt<A> {
         self.remap(|| ())
     }
 
+    /// Runs `f` with a reference to `A` when `Some(a)`.
+    ///
+    /// ```
+    /// use lifterr::option::OptionExt;
+    /// assert_eq!(Some(10).inspect(|a| println!("a = {a}")), Some(10));
+    /// ```
+    fn inspect<F>(self, f: F) -> Option<A>
+    where
+        F: FnOnce(&A);
+
     /// Recovers from an absent value with a total function.
     fn recover<F>(self, f: F) -> Option<A>
     where
@@ -77,6 +87,16 @@ impl<A> OptionExt<A> for Option<A> {
         F: FnOnce() -> Option<B>,
     {
         self.and_then(|_| f())
+    }
+
+    fn inspect<F>(self, f: F) -> Option<A>
+    where
+        F: FnOnce(&A),
+    {
+        self.map(|a| {
+            f(&a);
+            a
+        })
     }
 
     fn recover_with<F>(self, f: F) -> Option<A>
